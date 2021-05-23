@@ -178,7 +178,7 @@ P(i_{0} \to i_{1}, ... i_{l-1} \to i_{l}, ... i_{L-1} \to i_{L})=P(i_{0} \to i_{
 \end{eqnarray}
 donde $i$ denota el nodo seleccionado en cada una de las etapas, su subíndice $l=0,1,...,L$ denota la etapa a la que pertenece y L denota el número total de etapas. 
 
-La fórmula \ref{for:2}, como sucede con la distribución de \textit{Boltzman}, permite normalizar las probabilidades para que correspondan a cantidades positivas menores o iguales a 1, pero con un fácil cálculo de la sudatoria del denominador, dados los valores de A que corresponden a ceros o a unos. 
+La fórmula \ref{for:2}, como sucede con la distribución de \textit{SoftMax}, permite normalizar las probabilidades para que correspondan a cantidades positivas menores o iguales a 1, pero con un fácil cálculo de la sudatoria del denominador, dados los valores de A que corresponden a ceros o a unos. 
 
 \begin{eqnarray}\label{for:2}
 P(i \to j) = \frac{e^{v_j}}{\sum_k A_{i,k} e^{v_k}},
