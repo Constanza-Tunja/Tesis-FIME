@@ -1,0 +1,70 @@
+%Resumen
+
+\chapter{Resumen}
+\markboth{Resumen}{}
+
+{\renewcommand{\baselinestretch}{1.1}\selectfont
+{\setlength{\leftskip}{10mm}
+\setlength{\parindent}{-10mm}
+
+\autor.
+
+Candidato para obtener el grado de \grado\orientacion.
+
+\uanl.
+
+\fime.
+
+Título del estudio: \textsc{\titulo}.
+
+\noindent Número de páginas: \pageref*{lastpage}.}
+
+%%% Comienza a llenar aquí
+\paragraph{Objetivos y método de estudio:}
+
+El objetivo general es diseñar e implementar un algoritmo que apoye la toma de decisiones en el tiempo con pasos discretos, cuando la recompensa de la selección de cada una de las decisiones solo se conoce al final de n pasos, como puede ocurrir con procesos propios de la gestión de casos en los Business Process Management - BPMS. Este se divide en los siguientes objetivos específicos:
+
+\begin{enumerate}
+
+\item Establecer las bases teóricas y matemáticas que permitirán la creación del modelo \textit{L-n-armed bandit}, mediante una revisión de las técnicas de Aprendizaje por Refuerzo.
+
+\item Diseñar un modelo matemático que represente la distribución de probabilidad de cada una de las actividades del grafo, así como el modelo de aprendizaje a seguir.
+
+\item Comprobar el funcionamiento del modelo, mediante su implementación en una herramienta tecnológica que permita evaluarlo con valores generados aleatoriamente.  
+
+\item Plantear el problema de la gestión de casos en los BPMS, como un grafo por etapas que se ajuste a los características de la solución propuesta.
+\end{enumerate}
+
+En cuanto al método, se definieron las siguiente fases para el desarrollo de esta tesis:
+
+Fase 1. Revisión de Investigaciones previas.
+
+Fase 2.  Diseño de prototipo.
+
+Fase 3. Construcción de algoritmo. 
+
+Fase 4. Pruebas y Análisis de resultados.
+
+Fase 5. Comunicación de resultados.
+
+\paragraph{Contribuciones y conclusiones:}
+La mayoría de los trabajos de investigación que se desarrollan en las instituciones educativas o en la industria, parten de una necesidad presente en alguna población, pero también surgen investigaciones de una idea espontánea, que responde al tipo de pregunta ¿que pasaría si existiera...?, característica predominante de este trabajo. 
+
+Muchos son los modelos de grafos que se han adecuado para la solución de problemas específicos y para los que se han creado algoritmos, con sus posteriores mejoras y adaptaciones. El modelo de grafo por etapas con nodos disjuntos de etapa a  etapa, no se encontró en la revisión de literatura que se hizo y ofrece una alternativa para el modelado de problemas de decisión con alta incertidumbre, donde el efecto de la selección de cada nodo, solo se conoce al seleccionar el de la última etapa.
+
+Se establecieron parámetros de cantidad de tiempos de ejecución y de coeficiente de aprendizaje, para un grafo sencillo donde se pudiera revisar la respuesta real y el comportamiento del algoritmo. Se concluyó que con 80000 tiempos y un factor de aprendizaje del orden de 10e-4, multiplicado por la ganancia recibida al final de la L etapas, se tenía una convergencia aceptable hacia la ruta con ganancia máxima. Al realizar experimentos con grafos de mayor dimensión, para los que se mantuvo el orden de las ganancias por nodos (del orden de centenares), fue necesario ajustar el factor de aprendizaje con cantidades de menor orden, para que al multiplicarlas por la ganancia que aumentó por el incremento en el número de etapas, mantuviera el orden del factor de aprendizaje para el que fue probado.
+
+Aunque la aproximación de las probabilidades de transición de entre nodos, generó resultados satisfactorios, es un trabajo en el que se puede avanzar en varios aspectos:
+\begin{itemize}
+    \item Modificar la aplicación para que pueda dar el resultado, de forma confiable y con un menor número de iteraciones.    
+    \item Automatizar la adaptación de parámetros para grafos con un alto número de etapas.  \item Comprobación de la eficacia del modelo variando la densidad del grafo.    
+    \item Permitir la no selección de un nodo en alguna de las etapas.
+    \item Permitir que la selección de un nodo en alguna de las etapas, esté apoyada por reglas o condiciones.    
+    \item Modelar un problema de planificación automática con el grafo por etapas, adaptándolo desde las características propias del grafo de tipo And/Or.   
+\end{itemize} 
+
+\bigskip\noindent\begin{tabular}{lc}
+\vspace*{-2mm}\hspace*{-2mm}Firma del asesor: & \\
+\cline{2-2} & \hspace*{1em}\asesor\hspace*{1em}
+\end{tabular}}
+

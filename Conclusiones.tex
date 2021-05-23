@@ -1,0 +1,30 @@
+\chapter{Conclusiones y trabajo futuro}
+Con esta tesis se presenta a la comunidad científica un modelo no reportado con una estructura de aprendizaje por refuerzo para problemas específicos por etapas de estado y tiempo finitos, dispuestos en un grafo por etapas que aprovecha estructura, para aprender de forma eficiente ua trayectoria óptima que de be seguir un agente.
+
+Es una estructura sencilla, un modelo de decisión de Markov. 
+
+Se inscribe dentro del campo de Aprendizaje por refuerzo para sistemas de decisión de Markov de estado finito y tiempo discreto (por episodios) y el número de tiempos en cada episodio también es finito.
+
+Está estructurado en un grafo dirigido de principio a fin y esa estructura simple permite hacer un muestre eficiente para descubrir las trayectorias óptimas que debe seguir el agente.
+
+La contribución básica teórica de ester trabajo es el encontrar una estructura sencilla de un proceso de decisión de Mrkov que estamos aprovechando para muestrear de modo eficiente.
+
+Es una particularización de un problema muy general de Aprendizaje por refuerzo o de problemas de decisión de Markov que se resuelven mediante muestreo de Boltzman (Caso especial: aprovechar la estructura del Grafo por etapas)-> contribución a nivel metodológico y teórico. 
+
+Una de las aplicaciones que se prevé para el modelo propuesto es el manejo de casos dinámicos por parte de las BPMS, dado que, siguiendo la notación CMMN, el caso se deja modelar con un grafo, el cual es susceptible de adaptar al grafo por etapas que se presenta en esta tesis, siguiendo las recomendaciones consignadas en el capítulo \ref{aplica}.
+
+Muchos son los modelos de grafos que se han adecuado para la solución de problemas específicos y para los que se han creado algoritmos, con sus posteriores mejoras y adaptaciones. El modelo de grafo por etapas con nodos disjuntos de etapa a  etapa, no se encontró en la revisión de literatura que se hizo y se constituye en una alternativa para el modelado de problemas de decisión con alta incertidumbre, donde el efecto de la selección de cada nodo, solo se conoce al seleccionar el nodo de la última etapa.
+
+El modelo de aprendizaje de probabilidades de transición entre nodos tiene bases matemáticas y maneja como parámetros la cantidad de tiempos de ejecución y el valor de un factor de aprendizaje $\delta$. La investigación arrojó que tal factor debe depender del signo y la magnitud de la ganancia que se obtenga en cada iteración, por lo que finalmente se manejó un coeficiente para dicho factor, que se denota como $\gamma$.
+
+Para un grafo sencillo de etapas y 13 nodos con \textit{bandits} asociados del orden de las centenas, se concluyó que con 80000 tiempos y un coeficiente para el factor de aprendizaje del orden de 10e-4, se obtiene una convergencia aceptable hacia la ruta óptima. Al realizar experimentos con grafos de mayor dimensión, fue necesario ajustar el coeficiente del factor de aprendizaje con cantidades de menor orden, porque el valor de la ganancia aumentó por el incremento en el número de etapas.
+
+Aunque la aproximación de las probabilidades de transición de entre nodos, generó resultados satisfactorios, es un trabajo en el que se puede avanzar en varios aspectos:
+\begin{itemize}
+    \item Modificar la aplicación para que pueda dar el resultado, de forma confiable y con un menor número de iteraciones.    
+    \item Automatizar la adaptación de parámetros para grafos con un alto número de etapas.  \item Comprobación de la eficacia del modelo variando la densidad del grafo.    
+    \item Permitir la no selección de un nodo en alguna de las etapas.
+    \item Permitir que la selección de un nodo en alguna de las etapas, esté apoyada por reglas o condiciones.    
+    \item Modelar un problema de planificación automática con el grafo por etapas, adaptándolo desde las características propias del grafo de tipo And/Or.   
+\end{itemize} 
+

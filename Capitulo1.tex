@@ -1,0 +1,193 @@
+\chapter{Introducción}
+En este capítulo se da un contexto del problema que se aborda en esta tesis y se describe la estructura de este documento.
+
+\section{Descripción del problema científico}
+Los problemas de decisión están presentes en diversos escenarios de la vida diaria de las personas o de las organizaciones y han sido tema de estudio de la Ingeniería de sistemas y de otras ciencias afines \citep{parnell2011decision}. Los problemas dinámicos de decisión se refieren a la elección de una entre varias posibles opciones, donde las decisiones son tomadas de acuerdo a algún orden temporal. 
+
+Este proyecto se enfoca en procesos sobre tiempos discretos con decisiones organizadas en un grafo dirigido, es decir, si un agente escoge una alternativa al tiempo t, ello condiciona sus opciones para el tiempo t+1. Además el entorno del agente es fuertemente estocástico, puesto que  la ganancia o pérdida de cada decisión tomada se rige de acuerdo con una distribución de probabilidad no conocida. El agente no conoce el efecto de sus decisiones a cada paso sino hasta el final de su recorrido por todo el grafo.
+
+Un ejemplo cotidiano de un proceso de decisión con dichas características puede ser el de elección de hoja de ruta profesional. Una vez seleccionada una carrera profesional, la persona debe ir escogiendo su currículo, optar por lugares para ganar experiencia laboral, elegir entre varias propuestas de empleo y entre lugares geográficos o nichos económicos en los cuales ejercer su profesión. Evidentemente cada selección condiciona las opciones subsecuentes y la persona conoce el valor global de su secuencia de decisiones, tan sólo, luego de un tiempo considerable de ejercicio profesional. 
+
+Otro ejemplo más técnico, y con horizonte de tiempo más corto, es un proceso de planificación de secuencias de acciones que permiten alcanzar un objetivo; este proceso es conocido como ``planificación automática'' y se ubica dentro de las ramas de la inteligencia artificial; tal proceso, tradicionalmente, es modelado mediante un árbol And/Or, donde las acciones o estados de cada uno de sus niveles tienen precondiciones claramente demarcadas, así como un estado o nivel inicial y un estado final u objetivo (que puede ser un multiobjetivo) \citep{russell2004inteligencia}.
+
+Pero, la motivación del presente trabajo es, el problema que se tiene en los ``casos'' o procesos dinámicos que han de gestionar las BPMS (Bussines Process Management Suits), llamados así porque la secuencia de actividades a seguir no está totalmente establecida, como sí lo está para los procesos de negocio deterministas, y es porque cada caso tiene una solución particular. De esta manera, algunas BPMS han dado solución a esta necesidad convocando reuniones virtuales de expertos que recomiendan la secuencia de acciones a seguir de acuerdo al caso.
+
+Si bien, las industrias de BPMS han evolucionado hacia las iBPMS, que son BPMS con características inteligentes, que han logrado apoyar la administración de casos de los negocios \citep{frece2012bpm}, solo se ha logrado que algunas iBPMS puedan guiar a sus clientes en una secuencia óptima de actividades en dominios específicos de aplicación, como por ejemplo los préstamos para automóviles \citep{lakshmanan2010predictive} y el mantenimiento preventivo de automóviles \citep{khoshafian2015digital}, pero se sigue trabajando en una técnica que apoye procesos dinámicos en general. Pensar en este problema como en uno de decisión de acciones por etapas, donde su éxito o fracaso solo se conocerá al final de ellas, motivó esta investigación.
+
+%No se encontró en la literatura un grafo que modele específicamente las decisiones por etapas; se encuentran diversos autores que han trabajado en propuestas para dar solución a problemas haciendo uso de los grafos, cuyas bases y principios han sido objeto de estudio de la Investigación Operacional \citep{taha2011operations} y en estudios más recientes cono los que se encuentran en \citet{AvilaCartes2018}, \citet{valko2016bandits}, o en  \cite{tossou2017thompson}, por lo que se propone este modelo que sería aplicable al problema de la gestión de casos de las BPMS, dando un aporte valioso a esta industria, mediante un modelo novedoso y sencillo basado en las técnicas del Aprendizaje por Refuerzo.
+
+ %Algunos de estos problemas se constituyen en una serie de decisiones que se deben tomar etapa tras etapa, sin conocer los resultados de ellas, hasta tanto no se culmine todo el proceso. Imaginemos las decisiones que tienen lugar durante la formación académica de una persona; las etapas corresponden a los diferentes niveles de escolaridad y las opciones serán las instituciones educativas y sus ofertas, desde el nivel preescolar hasta el postgradual; obsérvese que solo se conocerá el éxito o fracaso de las decisiones tomadas, hasta que la persona termine todos los niveles educativos.
+
+%Otro problema de decisión con alta incertidumbre, el cual motivó esta investigación, es el problema de las BPPMS para tomar decisiones de secuencias de tareas que no están preestablecidas, 
+
+%Si bien, las industrias de BPMS han evolucionado hacia las iBPMS, con características inteligentes que les permitan apoyar, con el uso de la Inteligencia Artificial, el análisis predictivo, la administración de casos, la comunicación colaborativa y la operación de las aplicaciones móviles, entre otros problemas de los negocios\citep{frece2012bpm}; la administración de casos a la que hace referencia. también encontrada en la literatura como “Casos”, se refiere a los procesos dinámicos, también vistos como \textit{knowledge-intensive process} o \textit{Adaptive Case Management}, entre otros términos \citep{buck2014prosywis}.
+
+%De otra parte, se encuentran propuestas para modelar los procesos dinámicos, como es el caso de CMMN (\textit{Case Management Model and Notation}) que usa como base la misma notación del BPMN (\textit{Business Process Management Notation}), descrita con detalle por \citet{lemusenfoque}, adicionando elementos que permitan visualizar el indeterminismo de los Casos \citep{buck2014prosywis}. 
+
+%Partiendo de esta notación, en esta tesis se presenta un modelo equivalente en forma de grafo por etapas, donde los nodos representan las posibles actividades, mientras que las asistas darán cuenta de las posibles secuencias que se permiten entre ellas; así mismo se ofrece una solución computacional que brindará una secuencia óptima de actividades, manejando una asignación de probabilidades a cada una de las actividades, de acuerdo a su participación en los caminos que permitan o no alcanzar el objetivo, que es la solución del Caso mismo.Esta característica de no conocer el resultado de una decisión en el momento mismo en que se toma, se modela en el problema de decisión conocido como \textit{bandit}, el cual está inspirado en el juego de casino \textit{multi-armed bandit}, y el que será la base para el trabajo que aquí se presenta; allí, el jugador tiene a su disposición para jugar n brazos, de los cuales no se conoce inicialmente la distribución de probabilidad de su recompensa, el objetivo del jugador es encontrar una política para elegir siempre el siguiente brazo a jugar para lograr la ganancia máxima \citep{even2006action}.
+
+%A partir de ello, lo que se presenta en este trabajo es un algoritmo que encuentra la mejor acción para un \textit{bandit} con \textbf{L etapas} donde el brazo a jugar debe pertenecer a los de la etapa siguiente hasta llegar a la última. Esta es una propuesta no se ha encontrado en la revisión de literatura adelantada y  apoyaría la solución de problemas de decisión con alta incertidumbre, ya que la ganancia o pérdida se conocerá al culminar la toma de decisiones de todas las etapas, es decir que se presenta una alta incertidumbre en cada decisión individual de los brazos.
+
+%Para tal fin se probaría el algoritmo \textbf{L-n-armed bandit}, dándole al valor de L el número de etapas en que se modelará el Caso, disponiendo en cada etapa de un máximo de n actividades, donde cada una de ellas corresponderá a un \textit{bandit} con las características que se hallan en la literatura de Aprendizaje por Refuerzo \citep{sutton1998introduction}.
+
+%El éxito de esta propuesta se constituirá en una contribución importante para la industria de las BPMS, en cuanto puedan ofrecer modelos y soluciones procedimentales a los Casos que se presentan en las organizaciones de cualquier tipo, mediante un modelo novedoso y sencillo basado en las técnicas del Aprendizaje por Refuerzo, pero teniendo en cuenta que no se conoce la recompensa al ejecutar cada una de las acciones involucradas, sino únicamente al final de las \textbf{L etapas}, cuando se determine si se alcanzó o no el objetivo. 
+
+%Para evidenciar el cumplimiento del objetivo de esta tesis se hace entrega del código del modelo funcionando y probado con datos aleatorios que representen de forma ficticia la probabilidad real que tiene asociada cada una de las actividades candidatas dentro del proceso a seguir para un Caso
+
+%A nivel internacional se vislumbra un creciente interés en la mejora de los algoritmos que apoyan el aprendizaje automático y específicamente la toma de decisiones; una relación de 34 artículos relacionados con la toma de decisiones de modelos especialmente relacionados con la neutrosofía\footnote{Rama de la filosofía la cual estudia el origen, naturaleza y alcance de las neutralidades, así como sus interacciones con diferentes espectros ideacionales (book)} se muestra en \citet{khan2018systematic} y otra de al menos 16 referencias relacionadas con la educación las presenta \citet{najera2017brief}. La importancia que, para los negocios electrónicos, tiene el conocimiento de sus clientes actuales y potenciales ha provocado que también se generen sistemas de recomendación \citep{shani2011evaluating} y rastreadores \citep{Yun_2017_CVPR} para actuar de la forma más precisa hacia la posible en la conquista del cliente.
+
+\subsection{Sistematización del problema}
+
+Basados en la situación descrita, se requiere verificar, desde una base matemática, la posibilidad de dar manejo a la incertidumbre en la toma de decisiones para un problema susceptible de ser representado en un grafo por etapas ********, así como, establecer su modelo de aprendizaje y la forma en que se ha de implementar; de la misma manera, se hace necesario recomendar cómo el problema de la gestión de casos de los BPMS se puede adaptar al resultado de esta propuesta. 
+
+Ante la necesidad de automatizar este proceso de decisiones, se plantea la siguiente pregunta de investigación:
+
+\textbf{Pregunta problema:}
+
+¿Qué características debe tener un algoritmo que apoye la toma de decisiones en el tiempo, con pasos discretos, cuando las recompensas de la selección de cada una de las decisiones solo se conoce al final de n pasos, como puede ser el problemas de la gestión de casos en los BPMS?
+
+\textbf{Preguntas específicas}
+
+\begin{enumerate}
+
+\item ¿Cuáles son las bases teóricas y matemáticas del problema \textit{n-armed bandit} del Aprendizaje por refuerzo, que se deben tomar en cuenta para el algoritmo requerido?
+\item ¿Cómo simular la toma de decisiones automática, para un problema que se ajuste a las características que se presentan en este documento?
+\item Con qué restricciones se puede modelar un caso dinámico para ajustarlo a un problema de decisión como el que se presenta en este documento?
+\end{enumerate}
+
+Para resolver estos interrogantes, se plantean los objetivos de la investigación.
+
+%\subsection{\textbf{Caso ilustrativo}}
+%Se ejemplifica el Caso “Tratamiento de fracturas” que, como se puede pensar, tendrá en cuenta un examen diagnóstico de la lesión de un paciente, puede o no requerir de un examen de rayos X, procedimientos de: cirugía, fijación o yeso. 
+
+%La forma como se plasma este conocimiento en un diagrama del Caso, se presenta en el Apéndice \ref{apendicecaso} junto con el análisis de posibles recorridos que deben ser tenidos en cuenta al momento de implementar el problema en el grafo por etapas de que trata esta tesis.
+
+%Ya se han previsto algunas características de este grafo, para que se pueda adaptar al algoritmo propuesto en esta tesis; por ejemplo, se han de crear actividades ficticias para manejar las actividades que son requisito de otras futuras, pero que ya se han ejecutado en etapas anteriores y otras para indicar que no se ejecutará ninguna actividad en alguna etapa.
+
+
+%\section{CONTEXTO}
+
+%Para México y Colombia, particularmente, se encuentran artículos donde se aplican o evalúan algoritmos de toma de decisiones automáticas como se puede apreciar en \citet{kim2005promoting} y en \citet{lopezdata}, entre otros. Además, se cuenta con universidades y grupos de investigación que tiene como tema de estudio el aprendizaje automático, como son el Centro de Investigación en Física, matemáticas y ciencias de datos del Conacyt en México, el grupo de investigación MindLab de la Universidad Nacional de Colombia y el grupo de investigación MACC de la Universidad del Rosario, también de Bogotá Colombia.
+
+%No se encuentra información sobre una propuesta de investigación en la misma dirección del algoritmo que aquí se presenta como idea novedosa.
+
+\section{Objetivo general}
+
+Diseñar e implementar un algoritmo que apoye la toma de decisiones en el tiempo, con pasos discretos, cuando la recompensa de la selección de cada una de las decisiones del problema solo se conoce al final de n pasos, como puede ser el problema de la gestión de casos en los BPMS.
+
+\section{Objetivos específicos}\label{objespe}
+
+\renewcommand{\labelenumi}{\theenumi}
+\renewcommand{\theenumi}{\ref{objespe}.\arabic{enumi}.}
+\renewcommand{\theenumii}{\theenumi\arabic{enumii}}
+\begin{enumerate}
+
+\item Establecer las bases teóricas y matemáticas que permitirán la creación de un modelo \textit{L-n-armed bandit} mediante una revisión de las técnicas de Aprendizaje por Refuerzo. (En la sección \ref{nombre} se explican las razones del nombre dado al modelo).
+
+\item Diseñar un modelo matemático que represente la distribución de probabilidad de cada una de las actividades del grafo, así como el modelo de aprendizaje a seguir.
+
+\item Comprobar el funcionamiento del modelo, mediante su implementación en una herramienta tecnológica que permita evaluarlo con valores generados aleatoriamente.  
+
+\item Plantear el problema de la gestión de casos en los BPMS, como un grafo por etapas que se ajuste a los características de la solución propuesta.
+\end{enumerate}
+ \renewcommand{\labelenumi}{\arabic{enumi}.}
+\renewcommand{\labelenumii}{\theenumi.\arabic{enumii}.}
+
+\section{Hipótesis}
+
+El modelo basado en aprendizaje por refuerzo \textit{multi-armed bandit} conseguirá dar recomendaciones buenas para la toma de decisiones secuenciales, en procesos con alta incertidumbre que se puedan modelar con grafos, cuyas actividades sean representadas por nodos que se clasifican en etapas disyuntas.
+\begin{itemize}
+\item Variables de entrada: Etapas, actividades por etapas, tareas, tareas predecesoras, objetivo.
+\item Variables de salida: Ruta de actividades o tareas que se deben seguir para alcanzar el objetivo con mayor certeza.
+\end{itemize}
+
+\section{Novedad científica}
+
+Para México y Colombia, particularmente, se encuentran artículos donde se aplican o evalúan algoritmos de toma de decisiones automáticas como se puede apreciar en \citet{kim2005promoting} y en \citet{lopezdata}, entre otros. Además, se cuenta con universidades y grupos de investigación que tiene como tema de estudio el aprendizaje automático, como son el Centro de Investigación en Física, matemáticas y ciencias de datos del Conacyt en México, el grupo de investigación MindLab de la Universidad Nacional de Colombia y el grupo de investigación MACC de la Universidad del Rosario, también de Bogotá Colombia.
+
+No se encuentra información sobre una propuesta de investigación en la misma dirección del algoritmo que aquí se presenta como idea novedosa, por ser una solución sencilla que se ofrece para problemas de alta incertidumbre en los que se puede pensar en soluciones computacionalmente más costosas.
+
+Lo que hace diferente y original a la propuesta de esta investigación es el grafo por etapas, que obliga a decidir en cada una de ellas el nodo que se ha de seleccionar, teniendo en cuenta la experiencia de transición que se va adquiriendo desde el nodo de la etapa anterior que ya se haya seleccionado, lo que implica que las decisiones se vean como la selección de un arreglo de nodos, compuesto por un nodo de cada etapa, arreglo para el cual, realmente, se puede estimar su ganancia o pérdida asociada.
+
+Como ya se ha planteado anteriormente, se espera que esta investigación tenga una aplicabilidad relevante e importante para la industria de las BPMS, en cuanto a la gestión de los procesos dinámicos.
+
+\section{Justificación}
+
+En los últimos años, la IA se ha utilizado en la toma de decisiones, para mejorar el desempeño de las organizaciones y ofrecer un creciente portafolio de herramientas para el entretenimiento. Para esta tesis, el aprendizaje juega el papel más importante, pues se constituye como la base para poder recomendar acciones a seguir.
+
+Las técnicas de Aprendizaje Automático - AA vienen siendo perfeccionadas con los resultados de nuevas investigaciones, como es el caso del Deep Learning – DL, que mejoró el desempeño de las Redes Neuronales. El Aprendizaje por Refuerzo - AR también se ha venido utilizando para ofrecer apoyo en sistemas de recomendación, caracterizados por su alta incertidumbre. 
+
+Una propuesta nueva que busque seguir dando apoyo a la toma de decisiones secuenciales con el mismo o un mejor desempeño, o con un menor costo computacional, será un aporte valioso a la tecnología y a la ciencia
+
+La sencillez del modelo propuesto es, quizás, el aspecto más importante de la propuesta, ya que el algoritmo logra hacer búsquedas en escenarios con alta incertidumbre, que, eventualmente pueden requerir herramientas más robustas, ofreciendo de esta forma una alternativa para estos casos.
+
+Finalmente, esta investigación puede sentar las bases de investigaciones futuras, donde quizás se pretendan solucionar problemas específicos de decisiones, cuya complejidad no haya permitido acercamientos satisfactorios para los usuarios.
+
+
+\section{Resultados esperados}
+Esta sección presenta los productos que se esperan como resultado de esta tesis.
+
+\begin{itemize}
+\item Entrega de un modelo validado con datos aleatorios, que sirva de insumo a otras investigaciones tecnológicas.
+
+\item Socialización de resultados en un artículo producto del trabajo colaborativo entre docentes vinculados a los procesos investigativos de la Universidad Autónoma de Nuevo León y la Universidad de Boyacá.
+\end{itemize}
+
+\section{Metodología}
+
+\subsection{Enfoque general del método}
+
+Se selecciona inicialmente el enfoque cualitativo, ya que se sigue una lógica inductiva donde, primero se explora una serie de teorías que pueden servir para solucionar el problema, segundo se describe cómo se utilizarán y, tercero se generan perspectivas teóricas concluyentes \citep{hernandez2010metodologia}. Teniendo ya la propuesta objeto de esta investigación, se procede con un enfoque cuantitativo, que aterriza la pregunta de investigación y la hipótesis del trabajo y que trata de deducir o generalizar la utilidad misma del modelo para dejarlo a disposición de la comunidad investigativa. 
+
+\subsection{Técnicas específicas seleccionadas}
+
+Dentro del enfoque cualitativo, esta investigación se ubica en el ámbito los estudios exploratorios, donde, según \citet{hernandez2010metodologia}, se ``investigan problemas poco estudiados'', o se “indagan desde una perspectiva innovadora”, que son dos de las características de este trabajo. Específicamente se utiliza aquí la lectura, la discusión y el análisis, como técnicas para avanzar en esta primera parte de la investigación de forma inductiva.
+
+La parte que se enmarca dentro del enfoque cuantitativo, tiene que ver con los procesos deductivos o probatorios \citep{hernandez2010metodologia}, que permiten consolidar la hipótesis y la pregunta problema para esta investigación. El alcance se define como exploratorio, con un diseño experimental que utiliza la simulación para conocer el comportamiento de algunas variables de acuerdo a unos datos generados aleatoriamente, siguiendo una distribución de probabilidad normal.
+
+\textit{La simulación se emplea para validar el desempeño del modelo con datos aleatorios, lo que permite la creación de escenarios de diferentes características y la comprobación de que el modelo no se ve afectado por tal aleatoriedad.}
+
+\textit{Se analizan las relaciones entre una variable independiente y dos dependientes, y los efectos causales mediante los resultados del análisis de varianza y las medias. Se tiene en cuenta la hipótesis planteada para la tesis.}
+
+No se utilizan datos de casos como los que inspiraron esta investigación, porque no es factible encontrar un conjunto de estos procesos, que se repitan, donde se establezca si se alcanzan o no los objetivos, pero se ofrece una aproximación a la forma en que se puede modelar un caso como un grafo como el propuesto.
+
+\subsection{Fases de la metodología propuesta}
+
+Fase 1. Revisión de Investigaciones previas. En esta etapa se pretende establecer la existencia de trabajos similares al que se pretende desarrollar y recopilar la información necesaria para establecer los fundamentos matemáticos que han servido de base al aprendizaje por refuerzo, para, de esta forma, establecer los elementos del sistema a modelar, como son sus variables de entrada, la salida y sus relaciones.
+
+Fase 2.  Diseño de prototipo. Aquí se hará el diseño de:
+\begin{itemize}
+\item El modelo gráfico que permitan representar el problema (grafo)
+\item El modelo de probabilidades de transición entre nodos
+\item El modelo de aprendizaje
+\end{itemize}
+
+Fase 3. Construcción de algoritmo. 
+Aquí se hará la escogencia de las herramientas computacionales que faciliten la implementación requerida y se desarrollará la aplicación para el modelo.
+
+Fase 4. Pruebas y Análisis de resultados. Aquí se definen los valores para las pruebas, se hace su aplicación y se hacen el análisis y la discusión correspondientes para establecer la funcionalidad de la aplicación.
+
+Fase 5. Comunicación de resultados. Aquí se planteará el ajuste de un caso dinámico, al modelo expuesto en esta investigación y se escribirán los artículos de resultados de la investigación para que sean presentados a la comunidad científica.
+
+%Este proyecto consta de cinco fases a saber:Fase 1. Análisis de requerimientos e Investigaciones existentes Formalizar el problema de incertidumbre de los casos dinámicos en las organizaciones. Establecer el estado del arte del aprendizaje de máquina y, específicamente, del aprendizaje por refuerzo. En esta etapa se pretende recopilar la información necesaria para establecer los fundamentos matemáticos que han servido de base al aprendizaje por refuerzo para establecer los elementos del modelo.
+
+%Fase 2.  Diseño de prototipo Aquí se hará el diseño del modelo matemático que permitan representar el problema, la escogencia de las herramientas computacionales que faciliten la programación requerida y la identificación de los recursos tecnológicos para su construcción.
+
+%Fase 3. Construcción de prototipo Aquí se hace el desarrollo de la herramienta tecnológica pertinente para la implementación del modelo.
+
+%Fase 4. Pruebas y Análisis de resultados Aquí se define el escenario de las pruebas, así como los recursos que se requieren para su aplicación y se hacen las pruebas del modelo desarrollado para establecer la validez de la hipótesis propuesta.
+
+%Fase 5. Comunicación de resultados Aquí se elaborará el documento del trabajo de investigación y el artículo de resultados de la investigación para que sea presentado a la comunidad científica.
+\section{Estructura del documento}
+
+El documento de tesis consta de esta introducción, donde se plasman los componentes que fundamentan el trabajo desarrollado, como son la presentación del problema de investigación que se aborda, la justificación, la novedad científica, los objetivos, la hipótesis, los resultados esperados y la metodología que se sigue para este proyecto, entre otras. 
+
+Posteriormente, se presentan algunos antecedentes de la gestión de procesos de negocios, de forma que se entienda el origen de la idea de los grafos por etapas y de su solución con técnicas de Aprendizaje por refuerzo, en su caso básico de los \textit{multi-armed bandit}.
+
+Seguidamente, se desarrolla la metodología prevista que inicia con la revisión de literatura, y se continúa con los fundamentos matemáticos, así como los aspectos de diseño, tanto del grafo como del modelo de aprendizaje, finalizando con su implementación computacional.
+
+Las pruebas realizadas al modelo y los resultados obtenidos se presentan como una serie de experimentos que dan cuenta de la forma como se avanza en la concreción de la propuesta y se finaliza con las conclusiones generales y las referencias bibliográficas.
+
+Así, esta introducción ha presentado las bases de la propuesta de tesis que se desarrolla como requisito para alcanzar el título de doctorado.
+
+
