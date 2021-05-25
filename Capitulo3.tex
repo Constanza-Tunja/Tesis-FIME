@@ -270,9 +270,9 @@ n=Cantidad de nodos)} \label{PsUniforme}
 \end{algorithm}
 
 \subsection{Búsqueda con probabilidades aprendidas}
-Posteriormente se implementó el cálculo de la matriz de probabilidades de transición con las fórmulas explicadas en la sección \ref{mat} cuyo pseudocódigo se muestra en el cuadro algorítmico \ref{Pseudo}. A diferencia del anterior, la selección del nodo siguiente al presente en cada ruta, no solo va a tener en cuenta la vecindad con este último, sino el valor que el nodo a seleccionar tenga asociado en la matriz de probabilidad de transición que aquí se genera y se actualiza, de acuerdo a las ganancias que reciba el camino, en cada iteración, como se explica en seguida.
+Posteriormente se implementó el cálculo de la matriz de probabilidades de transición con las fórmulas explicadas en la sección \ref{mat} cuyo pseudocódigo se muestra en el cuadro algorítmico \ref{Pseudo}. A diferencia del anterior, la selección del nodo siguiente al presente en cada ruta, no solo va a tener en cuenta la vecindad con este último, sino la probabilidad de transición a cada nodo vecino, consignada en la matriz de probabilidad de transición que aquí se genera y se actualiza, de acuerdo a las ganancias que reciba el camino, en cada iteración, como se explica en seguida.
 
-\begin{algorithm}
+\begin{algorithm} [h]
 \caption{L-n-bandit(L=Cantidad de etapas, M[L]=Nodos por etapa )
 } 
 \label{Pseudo}
@@ -304,11 +304,11 @@ Posteriormente se implementó el cálculo de la matriz de probabilidades de tran
 \end{algorithmic}
 \end{algorithm}
 
-Para la primera iteración se maneja una probabilidad uniforme. Para las demás iteraciones, se calculan las probabilidades de transición entre nodos y en cada iteración selecciona un nodo de la etapa inicial, se calculan sus vecinos o nodos alcanzables y se selecciona el que mayor probabilidad de transición presente, para guardarlo en la ruta y proceder a hacer la búsqueda de sus vecinos en la siguiente etapa, hasta llegar a la última, usando siempre el mismo criterio de selección.
+Para la primera iteración se maneja una probabilidad uniforme y para las demás iteraciones, se calculan las probabilidades de transición entre nodos. En cada iteración se selecciona un nodo de la etapa inicial, se calculan sus vecinos o nodos alcanzables y se selecciona el que mayor probabilidad de transición presente, para guardarlo en la ruta y proceder a hacer la búsqueda de sus vecinos en la siguiente etapa, hasta llegar a la última, usando siempre el mismo criterio de selección.
 
-Una vez se conozca la ganancia o pérdida al final de la iteración, se actualizan los valores de preferencia de cada nodo de esa ruta, de acuerdo a la fórmula \ref{model3}, este valor se utiliza para calcular las nuevas probabilidades de transición con la fórmula \ref{model2}, que se tendrán en cuenta en la siguiente iteración. Cabe anotar que al final de cada etapa solo se afectan las probabilidades de transición de los nodos involucrados en la ruta seleccionada, pero que al iniciar cada iteración se cuenta con todas las modificaciones que hayan sufrido estas probabilidades en las iteraciones pasadas de la simulación.
+Una vez se conozca la ganancia o pérdida al final de la iteración, se actualizan los valores de utilidad $v$ de cada nodo de esa ruta, de acuerdo a la fórmula \ref{model3}, este valor se utiliza para calcular las nuevas probabilidades de transición con la fórmula \ref{model2}, que se tendrán en cuenta en la siguiente iteración. Cabe anotar que al final de cada etapa solo se afectan las probabilidades de transición de los nodos involucrados en la ruta seleccionada, pero que al iniciar cada iteración se cuenta con todas las modificaciones que hayan sufrido estas probabilidades en las iteraciones anteriores de esta simulación.
 
-La selección del siguiente vecino está fuertemente influenciada por las probabilidades de transición, constituyéndose en la explotación de los caminos preferidos, pero siempre deja un porcentaje de posibilidad de escoger cualquier nodo que no sea el de mayor probabilidad de transición asociada, lo que permite resolver el problema de la exploración, propio de la teoría de los \textit{bandits}, que garantiza la búsqueda de mejores soluciones que no se han considerado aún.
+Se recuerda que la selección del siguiente vecino está fuertemente influenciada por las probabilidades de transición, constituyéndose en la explotación de los caminos preferidos, pero siempre deja un porcentaje de posibilidad de escoger cualquier nodo que no sea el de mayor probabilidad de transición asociada, lo que permite resolver el problema de la exploración, propio de la teoría de los \textit{bandits}, que garantiza la búsqueda de mejores soluciones que no se han considerado aún.
 
 Al final de las iteraciones definidas, el simulador debe converger a la mejor ruta que haya estudiado, que puede ser la óptima, como se verá en la siguiente sección.
 
@@ -318,14 +318,14 @@ Al final de las iteraciones definidas, el simulador debe converger a la mejor ru
 
 Aunque el algoritmo se ha diseñado para generar grafos aleatorios, se hace necesario generar uno particular para poder comparar los valores resultantes de las ejecuciones del algoritmo con este. Tal grafo debe ser de un tamaño adecuado para poder calcular todas las posibles rutas desde un nodo inicial hasta uno final con sus respectivas ganancias; además, los nodos deberán tener asociados valores de ganancias, de forma que se pueda establecer claramente cuál es la ruta óptima.
 
-Se decide entonces, trabajar con un grafo de 5 etapas y 13 nodos, dispuestos como se ve en la figura \ref{Grafomodelo}, pero no necesariamente con esas aristas, es decir, con matriz de adyacencia aleatoria, así como los valores de sus \textit{bandits}, pero obligando a que uno de ellos por etapa tuviese un mayor valor que los demás, para favorecer la ruta mejor y así verificar si estaba funcionando.
-
 \begin{figure}[h]
   \centering
     \includegraphics[scale=0.5]{Grafo5L.png}
   \caption[Grafo Modelo]{Grafo Modelo con 5 etapas y 13 nodos}
   \label{Grafomodelo}
 \end{figure}
+
+Se realizan estas pruebas entonces, con un grafo de 5 etapas y 13 nodos, dispuestos como se ve en la figura \ref{Grafomodelo}, inicialmente con matriz de adyacencia aleatoria, así como los valores de utilidad de sus \textit{bandits}, pero obligando a que uno de ellos por etapa tenga un mayor valor que los demás, para identificar con facilidad la mejor ruta y así verificar su funcionamiento.
 
 
 \subsection{Pruebas con probabilidad uniforme}
@@ -339,11 +339,11 @@ El algoritmo cuyo pseudocódigo se presentó en el cuadro \ref{PsUniforme}, se e
 	\label{fig:uniforme}
 \end{figure}
 
-En esta gráfica, la curva superior azul corresponde a la ganancia de la mejor ruta probada hasta el momento, calculada con el valor real de los \textit{bandits} o medias asignadas a cada uno; en la curva más inestable se presentan las ganancias obtenidas en cada instante de tiempo por la ruta seleccionada, calculada con los valores distorsionados de los \textit{bandits}, que fueron generados alrededor del vector B de las medias, con una desviación estándar de 1; y en la curva inferior verdosa se muestra el promedio acumulado de estas ganancias, el cual converge a un único valor a través del tiempo, pero no trata de acercarse al valor real.
+En esta gráfica, la curva superior azul corresponde a la ganancia real de la mejor ruta probada hasta el momento, calculada con el valor de utilidad asignado a los \textit{bandits}; en la curva roja, la más inestable, se presentan las ganancias distorsionadas obtenidas en cada instante de tiempo por la ruta seleccionada, calculada con los valores distorsionados con ruido para los \textit{bandits}; y en la curva inferior verdosa se muestra el promedio acumulado de estas ganancias, el cual converge a un único valor a través del tiempo, pero no trata de acercarse al valor real.
 
 \subsection{Pruebas con probabilidades aprendidas}
 
-Con 33 iteraciones (T=33) el algoritmo \ref{Pseudo} generó la gráfica de la figura \ref{Resul2}, en la cual se pueden apreciar los valores que van tomado su ganancia y su ganancia promedio, la cual convergió rápidamente hacia el valor de la mejor ganancia real. La mejor ganancia real se calculó para la mejor ruta que el mismo algoritmo haya encontrado: esto permite que el software sea el que estime dicha ruta y su ganancia, sin una intervención manual, ya que hacer este cálculo equivaldría a una búsqueda exhaustiva en árbol, lo que puede llegar a ser muy dispendioso.
+Con 33 iteraciones (T=33) el algoritmo \ref{Pseudo} generó la gráfica de la figura \ref{Resul2}, en la cual se pueden apreciar los valores que van tomado su ganancia y su ganancia promedio, la cual convergió rápidamente hacia el valor de la mejor ganancia real. La mejor ganancia real se calculó para la mejor ruta que el mismo algoritmo haya encontrado: esto permite que el software sea el que estime dicha ruta y su ganancia, sin una intervención manual.
 
 \begin{figure} [H]
 	\centering
@@ -351,10 +351,9 @@ Con 33 iteraciones (T=33) el algoritmo \ref{Pseudo} generó la gráfica de la fi
 	\caption{Resultado con probabilidad aprendida}
 	\label{Resul2}
 \end{figure}
+En esta gráfica, al igual que en la del modelo anterior, la curva superior azul corresponde a la ganancia de la mejor ruta probada hasta el momento, calculada con el valor de utilidad real asignado a cada uno de los \textit{bandits}; en la curva más inestable se presentan las ganancias distorcionads obtenidas en cada instante de tiempo por la ruta seleccionada; y en la curva inferior verdosa se muestra el promedio acumulado de estas ganancias, el cual, trata de acercarse a la curva de la ganancia real. 
 
-En esta gráfica, al igual que en la del modelo anterior, la curva superior azul corresponde a la ganancia de la mejor ruta probada hasta el momento, calculada con el valor real de los \textit{bandits} o medias asignadas a cada uno; en la curva más inestable se presentan las ganancias obtenidas en cada instante de tiempo por la ruta seleccionada, calculada con los valores distorsionados de los \textit{bandits}, que fueron generados alrededor del vector B de las medias, con una desviación estándar de 1; y en la curva inferior verdosa se muestra el promedio acumulado de estas ganancias. 
-
-De otra parte, era importante saber cómo se comportaba el algoritmo, al ejecutarlo varias veces, dejando fijos los datos de entrada correspondientes al grafo que se quería evaluar, por lo que de aquí en adelante no se generaron más matrices de adyacencia ni vectores reales de los \textit{bandits} aleatorios, sino que se dejaron valores fijos para ejecutar las pruebas que se explican en el siguiente capítulo.
+De otra parte, para estimar el comportamiento del algoritmo se dejan fijos en el grafo los datos de la matriz de adyacencia y del vector de valores de utilidad reales de los \textit{bandits}, para ejecutar las simulaciones que se explican en el siguiente capítulo.
 
 
 %y se estima una ganancia que se genera aleatoriamente a una desviación estándar de su \textit{bandit} ... La decisión de usar una generación de números aleatorios que siguen una distribución normal con media en cero y desviación estándar en 1, es porque es la utilizada en la literatura de aprendizaje por refuerzo \citep{sutton1992reinforcement}, con la cual se ha probado el funcionamiento del modelo de decisión \textit{n-armed bandit}. 
