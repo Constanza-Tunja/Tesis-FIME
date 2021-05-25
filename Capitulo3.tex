@@ -25,6 +25,30 @@ El desarrollo de la metodología propuesta en el proyecto es el capítulo centra
 
 \section{Diseño del modelo matemático}
 \label{mat}
+La fórmula \ref{for:2}, como sucede con la distribución de \textit{SoftMax}, permite normalizar las probabilidades para que correspondan a cantidades positivas menores o iguales a 1, pero con un fácil cálculo de la sudatoria del denominador, dados los valores de A que corresponden a ceros o a unos. 
+
+\begin{eqnarray}\label{for:2}
+P(i \to j) = \frac{e^{v_j}}{\sum_k A_{i,k} e^{v_k}},
+\end{eqnarray}
+
+
+Así, la cantidad del numerador siempre será inferior o,  a lo sumo, igual a la cantidad del denominador, dado que el numerador es parte de la sumatoria del denominador, que, adicionalmente, es de valores positivos. La multiplicación por el valor de cada posición en la matriz de adyacencia $A$, garantiza que únicamente se sumen los exponenciales de nodos a los que en realidad se accede. 
+
+Otra característica de esta fórmula es que con los valores iniciales en cero para los exponentes de $e$, se obtienen probabilidades uniformes para todo nodo $j$ adyacente al nodo $i$.
+
+Finalmente, para controlar el aprendizaje del autómata se incrementa o decrementa el valor del exponente de la fórmula anterior, dado que de esta forma aumenta o disminuye la probabilidad asociada al nodo relacionado. Esto puede verse en la fórmula sencilla \ref{for:3}.
+\begin{eqnarray}\label{for:3}
+v_j(\tau + 1) = v_j(\tau) + \delta,
+\end{eqnarray}
+
+donde $\delta$ es un parámetro que controla la rata de aprendizaje:
+
+$P(i \to j)_{\tau+1} \sim e^{\delta} P(i \to j)_{\tau}$ 
+
+para pequeños valores de $\delta$.
+
+
+
 Cada uno de los nodos del grafo se constituye en un \textit{ bandit}, pero la recompensa de pasar por cada uno de ellos se desconoce antes y después de ello y solo se conocerá al finalizar la secuencia total de acciones que se decida tomar, es decir, al final de las \textbf{L} etapas.
 
 Como la probabilidad total de una ruta determinada, equivale a multiplicar las probabilidades de ir de un nodo a otro hasta culminar la ruta, tal como se hace en un árbol Bayesiano y como se presenta en la fórmula \ref{model1}, al tener el valor de recompensa de haber seleccionado un camino, se decide afectar las probabilidades de pasar entre cada uno de sus nodos, lo que se reflejará en una matriz de probabilidades de transición de estados, donde los estados son los nodos del grafo.

@@ -69,7 +69,7 @@ El Multiarmed-Bandit o \textit{n-armed bandits} es un modelo inspirado en las m�
 
 El modelo básico es el \textit{armed-bandit}, también conocido como \textit{bandit}, concepto que se utiliza en esta tesis, cuya analogía corresponde a una máquina de casino con un solo brazo o palanca, que en adelante se llamará acción. Para este modelo se tienen fórmulas sencillas que facilitan su implementación. 
 
-Por ejemplo, el valor que tendrá seleccionar una acción $a$ en el tiempo $t$ se estima mediante un promedio sencillo de las recompensas que el autómata ha recibido del ambiente cada vez que seleccionó dicha acción $a$, recompensa que no necesariamente será la misma en cualquier otra oportunidad o tiempo. La fórmula que se emplea es la \ref{Q}, donde $R_i$ son los valores de recompensa que va recibiendo el autómata en cada una de las $Nt(a)$ ocasiones en que la acción $a$ fue seleccionada.
+Por ejemplo, el valor que tendrá seleccionar una acción $a$ en el tiempo $t$ se estima mediante un promedio sencillo de las recompensas que el autómata ha recibido del ambiente cada vez que seleccionó dicha acción $a$, recompensa que no necesariamente será la misma en cualquier otra oportunidad o tiempo. La fórmula que se emplea es la \ref{Q}, donde $R_i$ son los valores de recompensa que va recibiendo el autómata en cada una de las $Nt(a)$ muestras en que la acción $a$ fue seleccionada.
 \begin{eqnarray}\label{Q}
 Q_t(a) = \frac{R_1+R_2+ ...+R_{Nt(a)}}{N_t(a)}
 \end{eqnarray}
@@ -171,34 +171,18 @@ Como ya se ha mencionado, se pretende usar un modelo estructurado que aproxime l
 
 Un modelo de probabilidades de transición de estados se adapta al problemas de búsqueda en el grafo por etapas con cualquier cantidad de nodos y remplazaría la forma de seleccionar una acción que se explicó para los \textit{bandits} en las ecuaciones \ref{Q} y \ref{A} \citep{sutton1998introduction}.
 
-También se ha de tener en cuenta que, la probabilidad total de una secuencia determinada de nodos, equivale a multiplicar las probabilidades de ir de un nodo a otro hasta culminar la ruta, tal como se hace en un árbol Bayesiano y como se presenta en la fórmula \ref{modelp1}.
+También se ha de tener en cuenta que, la probabilidad total de que se dé una secuencia muestral de nodos, equivale a multiplicar las probabilidades de ir de un nodo a otro hasta culminar la ruta, tal como se hace en un árbol Bayesiano y como se presenta en la fórmula \ref{modelp1}.
 \begin{eqnarray}
 \label{modelp1}
 P(i_{0} \to i_{1}, ... i_{l-1} \to i_{l}, ... i_{L-1} \to i_{L})=P(i_{0} \to i_{1})P(i_{1} \to i_{2})...P(i_{L-1} \to i_{L}),
 \end{eqnarray}
 donde $i$ denota el nodo seleccionado en cada una de las etapas, su subíndice $l=0,1,...,L$ denota la etapa a la que pertenece y L denota el número total de etapas. 
 
-La fórmula \ref{for:2}, como sucede con la distribución de \textit{SoftMax}, permite normalizar las probabilidades para que correspondan a cantidades positivas menores o iguales a 1, pero con un fácil cálculo de la sudatoria del denominador, dados los valores de A que corresponden a ceros o a unos. 
-
-\begin{eqnarray}\label{for:2}
+De otra parte, para calcular dichas probabilidades, se debe usar una función de normalización que asegure valores entre $0$ y$1$, como es característico de la distribución \textit{softmax} (\textit{Boltzmann}), que se visualiza en \ref{soft} \citep{Softmax}.
+\begin{eqnarray}
+\label{soft}
 P(i \to j) = \frac{e^{v_j}}{\sum_k A_{i,k} e^{v_k}},
 \end{eqnarray}
-
-
-Así, la cantidad del numerador siempre será inferior o,  a lo sumo, igual a la cantidad del denominador, dado que el numerado es parte de la sumatoria del denominador, que, adicionalmente, es de valores positivos. La multiplicación por el valor de cada posición en la matriz de adyacencia $A$, garantiza que únicamente se sumen los exponenciales de nodos a los que en realidad se accede. 
-
-Otra característica de esta fórmula es que con los valores iniciales en cero para los exponentes de $e$, se obtienen probabilidades uniformes para todo nodo $j$ adyacente al nodo $i$.
-
-Finalmente, para controlar el aprendizaje del autómata se incrementa o decrementa el valor del exponente de la fórmula anterior, dado que de esta forma aumenta o disminuye la probabilidad asociada al nodo relacionado. Esto puede verse en la fórmula sencilla \ref{for:3}.
-\begin{eqnarray}\label{for:3}
-v_j(\tau + 1) = v_j(\tau) + \delta,
-\end{eqnarray}
-
-donde $\delta$ es un parámetro que controla la rata de aprendizaje:
-
-$P(i \to j)_{\tau+1} \sim e^{\delta} P(i \to j)_{\tau}$ 
-
-para pequeños valores de $\delta$.
 
 \section{Proceso de negocio}
 
@@ -226,7 +210,7 @@ Es un proceso de negocio que no tiene un orden determinado para la ejecución de
 
 El término \textit{case}, que en \cite{van2005case} se define como una situación que puede ocurrir en una organización, para la cual el procedimiento de resolución no está necesariamente predefinido.
 
-A la tecnología que se encarga de la gestión de este tipo de procesos se le conoce momo gestión de “casos”; el caso contiene toda la información sobre el proceso \citep{marin2016introduction}.
+A la tecnología que se encarga de la gestión de este tipo de procesos se le conoce como Gestión de “Casos”; el caso contiene toda la información sobre el proceso \citep{marin2016introduction}.
 
 %\section{Modelo y notación de procesos de negocio}
 
@@ -261,7 +245,7 @@ Case Management Model and Notation” – CMMN es una referenciación entregada 
   \label{EjCMMN}
 \end{figure}
 
-En \citet{marin2016introduction} se da una aplicación de esta notación a un sistemas de atención de quejas. \citet{breitenmoser2015case} presenta un modelo en notación CMMN para seleccionar candidatos que aplica a un proceso de naturalización en un gobierno local. Tanto en \citet{auer2014business}  como en \citet{omg2011business} se expone una adaptación del ejemplo que se ve n la figura \ref{EjCMMN}, el cual corresponde al proceso de escribir un documento.
+En \citet{marin2016introduction} se da una aplicación de esta notación a un sistemas de atención de quejas. \citet{breitenmoser2015case} presenta un modelo en notación CMMN para seleccionar candidatos que aplica a un proceso de naturalización en un gobierno local. Tanto en \citet{auer2014business}  como en \citet{omg2011business} se expone una adaptación del ejemplo que se ve en la figura \ref{EjCMMN}, el cual corresponde al proceso de escribir un documento.
 
 %\subsection{Modelo CMMN en un grafo por etapas}
 
