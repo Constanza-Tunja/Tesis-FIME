@@ -12,46 +12,22 @@ El desarrollo de la metodología propuesta en el proyecto es el capítulo centra
 \section{Diseño del grafo}
 \textit{Inspirados en el grafo del caso de estudio descrito en la sección \ref{Sec:CMMN}, se observó que en la notación de modelado CMMN (ver figura \ref{EjCMMN}) se cuenta con un conjunto de tareas o actividades y de flujos entre ellas, que pueden ser opcionales. Se vio cómo esta situación podía modelarse en un grafo, en el que el problema a solucionar consiste en qué tareas realizar de \textbf{L} etapas consecutivas, para alcanzar al final el objetivo.}
 
-\textit{Un grafo dirigido y conexo permite modelar la estructura de procesos de decisión por etapas de estado y tiempo finitos, como el se aprecia en la figura \ref{GrafoEtapas}, cuyos nodos, entre cada dos etapas, tienen las características de un grafo bipartito, es decir que, entre acciones de la misma etapa no deben existir aristas; además, como es conexo, se garantiza que exista al menos una arista que conecte dos etapas sucesivas, así, cada nodo, (excepto los de la última etapa), debe estar conectado al menos con un nodo de la etapa siguiente. }
+\textit{Un grafo dirigido y conexo permite modelar la estructura de procesos de decisión por etapas de estado y tiempo finitos, como el quw se aprecia en la figura \ref{GrafoEtapas}, cuyos nodos, entre cada dos etapas, tienen las características de un grafo bipartito, es decir que, entre acciones de la misma etapa no deben existir aristas; además, como es conexo, se garantiza que exista al menos una arista que conecte dos etapas sucesivas, así, cada nodo, (excepto los de la última etapa), debe estar conectado al menos con un nodo de la etapa siguiente.}
 
 \begin{figure}[H]
   \centering
     \includegraphics[scale=0.8]{GrafoEtapas.png}
-  \caption{Grafo con L etapas}
+  \caption{Grafo por etapas}
   \label{GrafoEtapas}
 \end{figure}
 
-\textit{El grafo es un <<grafo por etapas>>, característica definida en la sección \ref{ConcepGraph}, y el problema que se quiera modelar debe asemejarse a este grafo de $L$ etapas, para que sea susceptible de emplear la aplicación propuesta en esta tesis con la cual encontraría un camino recomendable para alcanzar un objetivo dado.}
+\textit{El grafo es un <<grafo por etapas>>, característica definida en la sección \ref{ConcepGraph}, y el problema que se quiera solucionar debe modelarse como este grafo, con número fijo $L$ de etapas, para que sea susceptible de emplear la aplicación propuesta en esta tesis, por medio de la cual ha de encontrar un camino recomendable para alcanzar un objetivo dado.}
 
 \section{Diseño del modelo matemático}
 \label{mat}
-La fórmula \ref{for:2}, como sucede con la distribución de \textit{SoftMax}, permite normalizar las probabilidades para que correspondan a cantidades positivas menores o iguales a 1, pero con un fácil cálculo de la sudatoria del denominador, dados los valores de A que corresponden a ceros o a unos. 
+Ya se ha dicho que cada uno de los nodos del grafo se constituye en un \textit{ bandit}, pero se desconoce el valor de utilidad que se obtendrá al pasar por cada uno de ellos y solo se conocerá al finalizar la secuencia total de acciones que se decida tomar, es decir, al final de las \textbf{L} etapas.
 
-\begin{eqnarray}\label{for:2}
-P(i \to j) = \frac{e^{v_j}}{\sum_k A_{i,k} e^{v_k}},
-\end{eqnarray}
-
-
-Así, la cantidad del numerador siempre será inferior o,  a lo sumo, igual a la cantidad del denominador, dado que el numerador es parte de la sumatoria del denominador, que, adicionalmente, es de valores positivos. La multiplicación por el valor de cada posición en la matriz de adyacencia $A$, garantiza que únicamente se sumen los exponenciales de nodos a los que en realidad se accede. 
-
-Otra característica de esta fórmula es que con los valores iniciales en cero para los exponentes de $e$, se obtienen probabilidades uniformes para todo nodo $j$ adyacente al nodo $i$.
-
-Finalmente, para controlar el aprendizaje del autómata se incrementa o decrementa el valor del exponente de la fórmula anterior, dado que de esta forma aumenta o disminuye la probabilidad asociada al nodo relacionado. Esto puede verse en la fórmula sencilla \ref{for:3}.
-\begin{eqnarray}\label{for:3}
-v_j(\tau + 1) = v_j(\tau) + \delta,
-\end{eqnarray}
-
-donde $\delta$ es un parámetro que controla la rata de aprendizaje:
-
-$P(i \to j)_{\tau+1} \sim e^{\delta} P(i \to j)_{\tau}$ 
-
-para pequeños valores de $\delta$.
-
-
-
-Cada uno de los nodos del grafo se constituye en un \textit{ bandit}, pero la recompensa de pasar por cada uno de ellos se desconoce antes y después de ello y solo se conocerá al finalizar la secuencia total de acciones que se decida tomar, es decir, al final de las \textbf{L} etapas.
-
-Como la probabilidad total de una ruta determinada, equivale a multiplicar las probabilidades de ir de un nodo a otro hasta culminar la ruta, tal como se hace en un árbol Bayesiano y como se presenta en la fórmula \ref{model1}, al tener el valor de recompensa de haber seleccionado un camino, se decide afectar las probabilidades de pasar entre cada uno de sus nodos, lo que se reflejará en una matriz de probabilidades de transición de estados, donde los estados son los nodos del grafo.
+Además, como la probabilidad total de una ruta determinada, equivale a multiplicar las probabilidades de ir de un nodo a otro hasta culminar la ruta, tal como se hace en un árbol Bayesiano y como se presenta en la fórmula \ref{model1}, al tener el valor de recompensa de haber seleccionado un camino, se decide afectar las probabilidades de pasar entre cada uno de sus nodos, lo que se reflejará en una matriz de probabilidades de transición de estados, donde los estados son los nodos del grafo.
 \begin{eqnarray}\label{model1}
 P(i_{0} \to i_{1}, ... i_{l-1} \to i_{l}, ... i_{L-1} \to i_{L})=P(i_{0} \to i_{1})P(i_{1} \to i_{2})...P(i_{L-1} \to i_{L}),
 \end{eqnarray}
@@ -59,55 +35,61 @@ donde $i$ denota el nodo seleccionado en cada una de las etapas, su subíndice $
 
 Cuando $l = L$ se habrá acumulado una ganancia $G$, que puede ser positiva o negativa. Dado este valor, se hace una modificación a cada una de las probabilidades de transición involucradas y se constituye en el modelo de aprendizaje que se explicará en la sección \ref{aprende}.
 
-Estas probabilidades se pueden aproximar mediante la fórmula \ref{model2}, que garantiza la normalización de las probabilidades de transición desde un mismo nodo, cuya suma se requiere que sea 1.
+\textit{Para el cálculo de estas probabilidades se propone la fórmula \ref{model2}, que, como sucede con la distribución de \textit{SoftMax}, permite generar las probabilidades, las que correspondan a cantidades positivas entre 0 y 1, pero con un fácil cálculo de la sumatoria del denominador, ya que los valores de $A$ corresponden a los ceros y unos de la matriz de adyacencia del grafo.}
 \begin{eqnarray}\label{model2}
 P(i \to j) = \frac{e^{v_j}}{\sum_k A_{i,k} e^{v_k}},
 \end{eqnarray}
-donde $A$ es la matriz de adyacencia del grafo y, el valor binario de $A_{i,k}$ permite que solo se tengan en cuenta nodos alcanzables desde el nodo $i$; además, $v$ es el valor asociado a cada uno de los nodos del grafo, el cual se va actualizando en cada una de las iteraciones $\tau$ como se muestra en la ecuación \ref{model3}, valor que no necesariamente está relacionado con la recompensa asociada a ese nodo (\textit{bandit}).
+donde $A$ es la matriz de adyacencia del grafo y, el valor binario de $A_{i,k}$ permite que solo se tengan en cuenta nodos alcanzables desde el nodo $i$; además, $v$ es el valor de utilidad asociado a cada uno de los nodos del grafo, el cual se va actualizando en cada una de las iteraciones $\tau$ como se muestra en la ecuación \ref{model3}, valor que no necesariamente está relacionado con la recompensa asociada a ese nodo (\textit{bandit}).
 
-Los valores iniciales de los $v$ son cero, de forma que la fórmula \ref{model2} calcula la misma probabilidad para pasar de un nodo a cada uno de sus siguientes o vecinos alcanzables, es decir, con una probabilidad uniforme, garantizando que la decisión inicial de pasar del nodo $i$ a otro nodo $k$, es totalmente aleatoria.
+\textit{La cantidad del numerador siempre será inferior o, a lo sumo, igual a la cantidad del denominador, dado que el numerador es un término de la sumatoria que aparece en el denominador, la cual está conformada por valores positivos; esto garantiza que los resultados estén en el rango entre 0 y 1; adicionalmente, la suma de todas las probabilidades para los $k$ valores que puede tomar $j$ será 1, lo que corresponde a las probabilidades de transición que se tienen al estar en un nodo $i$;} y, la multiplicación por el valor de cada posición en la matriz de adyacencia $A$, garantiza que únicamente se sumen los exponenciales de nodos adyacentes.
 
-\textit{La probailidad de transición del estado i al estado j es proporcional al valor de utilidad que da esa decisión. Mediante la fórmula se quiere orientar a lagente para que sepa en cada etapa y en cada nodo de una etapa la transición más recomendable que a la larga va a dar el mayor beneficio}
+Los valores de utilidad iniciales de los $v$ asociados a cada nodo son cero, de forma que la fórmula \ref{model2} calcula la misma probabilidad para pasar del nodo $i$ a cada uno de sus siguientes, es decir, una probabilidad uniforme; de esta forma se garantiza que la decisión inicial de pasar del nodo $i$ a cualquier otro nodo $j$, es totalmente aleatoria. 
 
-\textit{Es una particularización de un problema muy general de Aprendizaje por refuerzo o de problemas de decisión de Markov que se resuelven mediante muestreo de Boltsman (Caso especial: aprovechar la estructura del Grafo por etapas)}
+\textit{La probabilidad de transición del nodo i al nodo j va a estar en adelante influenciada por los valores de utilidad $v$ asociados a los nodos, como se explica en la sección \ref{aprende}}.
 
-\section{Diseño del modelo de aprendizaje} \label{aprende}
-Cada uno de los nodos es un \textit{bandit}; en la etapa uno se selecciona el nodo origen y se estima una ganancia que se genera aleatoriamente a una desviación estándar de su \textit{bandit} y en cada etapa siguiente se selecciona un nodo adyacente al ya seleccionado, inicialmente con una probabilidad uniforme, teniendo en cuenta las restricciones de precedencia del problema. 
+\section{Diseño del modelo de aprendizaje} 
+\label{aprende}
 
-La decisión de usar una generación de números aleatorios que siguen una distribución normal con media en cero y desviación estándar en 1, es porque es la utilizada en la literatura de aprendizaje por refuerzo \citep{sutton1992reinforcement}, con la cual se ha probado el funcionamiento del modelo de decisión \textit{n-armed bandit}. 
+\textit{El modelo busca orientar al agente para que sepa en cada instante cuál es el nodo de la etapa siguiente que a la larga ha de dar el mayor beneficio, lo que se constituye en una particularización de un problema de decisión de Markov donde se hace un muestreo de nodos en cada iteración y se aprovecha la estructura del Grafo por etapas}
 
-Posteriormente, aplicando el modelo matemático, se elegirán los nodos de acuerdo con una matriz de probabilidades de transición de estado, que el autómata irá aprendiendo, teniendo en cuenta la fórmula \ref{model2}.
+Cada uno de los nodos es un \textit{bandit} con un valor de utilidad $v$ asociado; en la etapa inicial se selecciona el nodo origen y en cada etapa siguiente se selecciona un nodo adyacente al ya seleccionado, inicialmente de forma aleatoria porque todas las decisiones inician con probabilidad uniforme, y posteriormente haciendo uso de una matriz de probabilidades de transición de estado, que el autómata irá modificando de acuerdo a su aprendizaje.
 
-Al culminar la secuencia de nodos de las L etapas, se recibe una recompensa que indicará si se ha alcanzado o no el objetivo. De acuerdo a esta recompensa, la preferencia $v$ de cada nodo de la ruta será ponderada para la siguiente iteración sumando un $\delta$, que puede ser positivo o negativo, como se muestra en la fórmula \ref{model3}
+Al culminar la secuencia de nodos de las L etapas, se recibe una recompensa que indicará si se ha alcanzado o no el objetivo. De acuerdo a esta recompensa, el valor de utilidad $v$ de cada nodo de la ruta será ponderada para la siguiente iteración sumando un $\delta$, que puede ser positivo o negativo, como se muestra en la fórmula \ref{model3}
 \begin{eqnarray}\label{model3}
 v_j(\tau + 1) = v_j(\tau) + \delta,
 \end{eqnarray}
-donde $\delta$ es un parámetro que controla la rata de aprendizaje: $P(i \to j)_{\tau+1} \sim e^{\delta} P(i \to j)_{\tau}$ para pequeños valores de $\delta$.
+donde $\delta$ es un parámetro que controla la rata de aprendizaje, ya que $P(i \to j)_{\tau+1} \sim e^{\delta} P(i \to j)_{\tau}$ para pequeños valores de $\delta$.
 
 %El modelo de decisión es lo suficientemente simple como para admitir un tratamiento bayesiano completo de la estimación de parámetros después de cada episodio. Dada la ganancia total $V_L(\tau) = v_1(\tau)+...+v_L(\tau)$, la probabilidad siguiente $P[\vec{v}(\tau) | V_L(\tau)]$ puede escribirse en términos de la ecuaciones (\ref{model1}) y (\ref{model2}).
 
-Luego de varias iteraciones, la matriz de probabilidades tiende a estabilizarse, es decir, sus valores no cambian considerablemente. De esta forma el modelo ya ha aprendido una ruta específica que reconocerá como la recomendada.
+Luego de varias iteraciones, la matriz de probabilidades tiende a estabilizarse, es decir, sus valores no cambian considerablemente; en ese momento, el modelo ya ha aprendido una ruta específica que reconocerá como la recomendada.
 
-Estos nuevos valores de preferencia de los nodos se tienen en cuenta para calcular una nueva ruta, dando prioridad de selección a los nodos que cuenten con un mayor valor, de acuerdo a la fórmula \ref{model2}, lo que garantiza que, finalmente los nodos con mayor valor de preferencia, quedarán en la ruta solución.
+Con los nuevos valores de utilidad $v$ de los nodos se actualizan las probabilidades de selección, de acuerdo a la fórmula \ref{model2}, y los nodos favorecidos por estas probabilidades tendrán un nuevo valor de utilidad $v$ afectado por $\delta$ lo que influirá en los siguientes cálculos de la probabilidades de transición de estados que, finalmente guiará las secuencia de nodos que quedarán en la ruta solución.
 
-\subsection{Explotación}
-La posibilidad de seleccionar con mayor probabilidad los nodos que han estado involucrados en rutas que generan recompensas positivas, permite que el autómata pueda acercarse, cada vez con mayor exactitud, a los valores de los \textit{bandits} que realmente están asociados a cada uno de los nodos de la ruta que él considera que es la más opcionada.
-
-Este aspecto es el que se conoce como explotación que, en términos de juegos de casino, es seguir jugando la misma opción que ha dado los mejores resultados, esperando mejorar aún más.
 
 \subsection{Exploración}
-Este modelo de aprendizaje deja la posibilidad de seleccionar en cada etapa un nodo, que no necesariamente sea el que ha venido dando el mejor resultado, porque todos los nodos tendrán alguna posibilidad, aunque sea pequeña, de ser elegidos.
+Este modelo de aprendizaje siempre deja una posibilidad de seleccionar en cada etapa un nodo, que no necesariamente sea el que ha venido dando el mejor resultado, dado que todos los nodos tendrán alguna posibilidad, aunque sea pequeña, de ser elegidos.
 
 Este aspecto se conoce como la exploración, que consiste en dar un margen de duda, por si hay otras opciones que aún no han sido exploradas y que pueden dar una mejor recompensa.
 
-\section{Selección del camino respuesta}
+\textit{En las iteraciones iniciales se dará mayor espacio a la exploración, puesto que se inicia con las probabilidades uniformes ya mencionadas y poco a poco se van diferenciando las probabilidades de transición de las opciones que hay desde un nodo $i$. Mientras estas diferencias no sean muy marcadas, se facilitará la exploración de otras decisiones que pueden dar resultados mejores o similares a los ya aprendidos.}
+
+\subsection{Explotación}
+La posibilidad de seleccionar con mayor probabilidad los nodos que han estado involucrados en rutas que generan recompensas positivas, permite que el autómata pueda acercarse, cada vez con mayor exactitud, a los valores de los \textit{bandits} que están asociados a cada uno de los nodos de la ruta que él considera que es la más opcionada.
+
+Este aspecto es el que se conoce como explotación que, en términos de juegos de casino, es seguir jugando la misma opción que ha dado los mejores resultados, esperando mejorar aún más.
+
+\textit{En el modelo de aprendizaje propuesto, la explotación tendrá mayor preferencia en las iteraciones finales, donde las probabilidades de transición desde un nodo $i$ ya tienden a tener una acción elegida con una probabilidad cercana a 1 y las demás con probabilidades cercanas a 0. Esta diferencia ya será lo suficientemente grande como para que se siga tomando la misma decisión, de esa iteración en adelante.}
+
+
+%\section{Selección del camino respuesta}
 
 %\subsection{Modelo Convergencia de la ganancia promedio}
-Luego de que el agente haya generado una matriz de probabilidades de transición entre nodos, y con ella, luego de varias iteraciones, haya encontrado una estabilidad en la ganancia que va calculando, se espera que el argumento que genera esta ganancia sea el camino óptimo a recomendar.
+%Luego de que el agente haya generado una matriz de probabilidades de transición entre nodos, y con ella, luego de varias iteraciones, haya encontrado una estabilidad en la ganancia que va calculando, se espera que el argumento que genera esta ganancia sea el camino óptimo a recomendar.
 
-Por lo tanto, para este modelo lo más importante es la convergencia del valor de la ganancia promedio, lo cual se probará comparándolo con el valor de la ganancia real del mejor camino para un ejemplo con valores conocidos.
+%Por lo tanto, para este modelo lo más importante es la convergencia del valor de la ganancia promedio, lo cual se probará comparándolo con el valor de la ganancia real del mejor camino para un ejemplo con valores conocidos.
 
-La convergencia de este promedio de ganancias se habrá de notar cuando el camino seleccionado se pruebe un número de veces muy superior a las ocurrencias de otros caminos, predominando el valor de la ganancias del camino elegido.
+%La convergencia de este promedio de ganancias se habrá de notar cuando el camino seleccionado se pruebe un número de veces muy superior a las ocurrencias de otros caminos, predominando el valor de la ganancias del camino elegido.
 
 %\subsection{Modelo Mejor ganancia promedio}
 %En este caso, para dar la respuesta se seguirá el modelo tradicional de los \textit{bandit}, donde, luego de elegir  un brazo y de comprobar su recompensa aparente, esta se van acumulando y se van promediando para cada brazo posible de ser seleccionado, para luego de varias búsquedas, escoger el brazo cuya ganancia promedio sea la mejor, como se ve en la ecuación \ref{Gprom}, ya presentada en la fundamentación teórica.
@@ -144,23 +126,80 @@ En seguida se presentan las versiones de pseudocódigo que se fueron implementan
 
 \subsection{Generador de bandits}
 
-Primero se probó el algoritmo que genera los \textit{bandits} para los nodos, el cual aplica la fórmula de los promedios de las ganancias para entregar al final la acción con mejor valor asociado, dándole al algoritmo valores distorsionados que se encontraban entre una desviación estándar de 1 del valor asociado al \textit{bandit}. Este código se probó varias veces y siempre encontró el valor buscado. 
+Se inicia con la creación y prueba de la selección del \textit{bandit} que mejor probabilidad tenga asociada. El algoritmo aplica la fórmula del  promedio de las recompensas sobre el número de veces que fue seleccionado \ref{Q}.
 
-La figura \ref{AlgBandit} es el resultado gráfico de una corrida de este algoritmo con 400 iteraciones, donde la línea roja representa las ganancias que va encontrando en cada iteración y la línea horizontal que está ubicada en 1 representa el número del brazo que en promedio obtiene la mejor ganancia al finalizar las iteraciones, respuesta que corresponde exactamente con el \textit{bandit} que tiene asignado el mayor valor de ganancia real, de los 10 que se le dieron a escoger.
+Como se aprecia en el pseudocódigo \ref{Bandit} se generó para cada  uno una media con distribución Normal (0,1) y a partir de cada valor se generaron otros valores distorsionados, adicionando un ruido, también generado por distribución Normal (0,1). Este código se probó varias veces y siempre encontró la acción $a$ asociada al \textit{bandit} con mejor probabilidad.
+
+
+
+\begin{algorithm} [h]
+\caption{Genera-bandit(T=Iteraciones, n=Número de acciones,
+$\epsilon$=$\epsilon$-greedy)} 
+\label{Bandit}
+\begin{algorithmic}[1]
+\FOR{t = 1 \TO T}
+     \STATE r = np.random.sample()
+     \IF{$r > \epsilon$}
+        \STATE  a = np.argmax(Q)
+     \ELSE
+        \STATE a = np.random.randint(0,n)
+     \ENDIF
+     \STATE sQ[a] = sQ[a] + q[a] + np.random.randn()
+     \STATE Nt[a] =  Nt[a] + 1
+     \STATE Q[a] = sQ[a] / Nt[a]
+     \STATE Imprima('a ',a)
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+La figura \ref{AlgBandit} es el resultado gráfico de una corrida de este algoritmo con 400 iteraciones, 10 acciones y $\epsilon$=0.3. La línea roja representa la recompensa promedio que va encontrando en cada iteración y la línea horizontal que está ubicada en 1 representa el número del \textit{bandit} que en promedio obtiene la mejor ganancia al finalizar las iteraciones, respuesta que corresponde exactamente con los valores asignados inicialmente.
 
 \begin{figure} [H]
     \label{Resul2}
 	\centering
 	\includegraphics[scale=0.6]{AlgBandit}
-	\caption[Resultado de la selección de brazo usando \textit{bandits}]{Resultado de la selección del mejor brazo usando la teoría de los \textit{bandits}}
+	\caption[Resultado de la selección de brazo usando \textit{bandits}]{Selección de la mejor acción usando el algoritmo de los \textit{bandits}}
 	\label{AlgBandit}
 \end{figure}
 
-La oscilación de la línea roja se produce por la exploración que el algoritmo hace de otras alternativas diferentes a la que en cada momento parece ser la mejor. Tampoco dan los mismos valores aunque esté probando el mismo brazo, porque estos valores están siendo generado con una distribución normal, con media en el valor real (que también fue aleatorio), dentro de una desviación estándar que en este caso fue de 1. 
+La oscilación de la línea roja se produce por la exploración que el algoritmo hace de otras alternativas diferentes a la que en cada momento parece ser la mejor. No se esperan los mismos valores cada vez que se esté probando el mismo \textit{bandit}, porque los valores que recibe son los que fueron distorsionados con el ruido. 
 
 \subsection{Generador de la matriz de adyacencia}
 
-Posteriormente se implementó el código que genera las matrices de adyacencia del grafo por etapas. Estas matrices debían ser escalonadas, debían obedecer a los requisitos de precedencia de nodos entre etapas y debía tener al menos un 1 en cada fila para garantizar la conexión de las etapas. Este código también se probó varias veces y siempre arrojó resultados adecuados. Un ejemplo de este resultado se muestra en la figura \ref{MatrizAy}.
+Posteriormente se implementó un código que genera aleatoriamente matrices de adyacencia del grafo por etapas. Estas matrices deben ser escalonadas, deben obedecer a los requisitos de precedencia de nodos entre etapas y deben tener al menos un 1 en cada fila para garantizar la conexión de las etapas. El pseudocódigo \ref{Matriz} corresponde a tales características.
+
+Este algoritmo recibe los datos de número de etapas y número de nodos por cada etapa que ya han de estar definidos con anterioridad.
+
+\begin{algorithm} [h]
+\caption{Genera-matriz(L=Cantidad de etapas, M[L]=Nodos por etapa} 
+\label{Matriz}
+\begin{algorithmic}[1]
+\STATE Calculate: n=Cantidad de nodos
+\STATE Generate: Ad[nxn] = zeros
+\STATE nodoi=0
+\STATE nodofin= nodoi+M[0]-1
+\FOR{l = 1 \TO L-1}
+    \FOR{i in range(nodoi, nodofin+1)}
+        \STATE nodohi=nodofin+1
+        \STATE nodohfin= nodohi+M[l+1]-1
+        \STATE sumafila=0
+        \FOR{j in range(nodohi, nodohfin+1)}
+            \STATE arg = np.random.randint(2, size=1)
+            \STATE A[i,j] = arg 
+            \STATE sumafila += A[i,j]
+            \IF{umafila == 0}
+                \STATE  A[i,j] = 1
+            \ENDIF
+        \ENDFOR
+    \ENDFOR
+    \STATE nodoi=nodohi
+    \STATE nodofin=nodohfin
+\ENDFOR     
+\STATE Imprima('A ',A)
+\end{algorithmic}
+\end{algorithm}
+
+Este código también se probó varias veces y siempre arrojó resultados adecuados de matrices escalonadas, adecuadas para el grafo por etapas diseñado, como el ejemplo que se muestra en la figura \ref{MatrizAy}. 
 
 \begin{figure} [H]
     \label{Resul2}
@@ -174,11 +213,32 @@ Posteriormente se implementó el código que genera las matrices de adyacencia d
 
 Se implementó la fusión del algoritmo para la generación de la matriz de adyacencia, con el que genera los valores asociados a cada nodo o \textit{bandit}; el pseudocódigo correspondiente se probó con valores aleatorios, obteniendo siempre la matriz escalonada que se esperaba y los valores asociados a los \textit{bandits}.
 
-Se le adicionó una funcionalidad para que tomara una ruta factible, teniendo en cuenta la matriz de adyacencia para encontrar los vecinos de cada nodo. La pruebas que se hicieron funcionaron siempre correctamente. Se procedió a probar que sobre esta ruta, calculara correctamente tanto la ganancia real asociada (teniendo en cuenta el vector de valores generados para los \textit{bandits}), como la ganancia distorsionada asociada a esa misma ruta (teniendo en cuenta el nuevo vector de valores distorsionados de los \textit{bandits}, el cual se genera con números aleatorios que siguen una distribución normal con media en el elemento del primer vector, dentro de una desviación estándar de 1). Las pruebas para esta implementación siempre funcionaron correctamente.
+Se le adicionó una funcionalidad para que tomara una ruta factible, teniendo en cuenta la matriz de adyacencia para encontrar los vecinos de cada nodo, la cual se presenta en el algoritmo \ref{Ruta}. Las pruebas que se hicieron funcionaron siempre correctamente.
+
+\begin{algorithm} [h]
+\caption{Genera-rutas(L=Cantidad de etapas, A=Matriz de adyacencia} 
+\label{Ruta}
+\begin{algorithmic}[1]
+\STATE n[0]=0
+\FOR{l = 1 \TO L}
+    \STATE nzv = np.nonzero(A[o, ])
+    \STATE nzv = np.reshape(nzv,-1) :vector de nodos adyacentes
+    \FOR{i in range(o, len(nzv)}
+        \STATE d = np.random.choice(nzv, 1)
+        \STATE R[l]=d
+    \ENDFOR   
+\ENDFOR
+\STATE Imprima('Ruta ',R)
+\end{algorithmic}
+\end{algorithm}
+
+\textit{Los valores que se asignaron aleatoriamente a los \textit{bandits} sirven para calcular una ganancia total por cada ruta que contenga nodos de las $L$ etapas; esta ganancia equivaldría a la \textit{ganancia real} que se obtendría si se supieran los valores de utilidad asociados a cada \textit{bandit}. Así mismo, en cada iteración que ejecute el código, el autómata recibirá una información distorsionada del valor de cada \textit{bandit}, de acuerdo a la distribución Normal que ya se ha explicado; con estos valores el autómata ha de calcular la ganancia que realmente estará recibiendo al final de las $L$ etapas, a la que en adelante se reconocerá como \textit{ganancia distorsionada}. }
+
+El cálculo de la ganancia distorsionada se muestran en los algoritmos siguientes como $Gain_{path}$, la cual va recogiendo en cada etapa la ganancia del nodo seleccionado $Gan_{orig}$, de acuerdo a los valores de utilidad de los \textit{bandit}, que realmente recibe el autómata y que se generan en cada iteración como $Gan_{n}$.
 
 \subsection{Encontrando la ruta óptima}
 
-\textit{Aquí se presentan dos momentos diferentes: Inicialmente aquel donde la escogencia del siguiente nodo de un camino, solo tiene que estar dentro del conjunto de vecinos del nodo actual, pero todos con la misma probabilidad de ser seleccionados; a este modelo le reconoceremos como Probabilidades Uniformes. Seguidamente se implementa la generación de la matriz de probabilidades de transición de pasar de un nodo a otro, la cual se basa en un fundamento matemático específico que se presentó en la sección \ref{mat} y del que se espera que converja a una única respuesta con la mejor ruta encontrada; a este le reconoceremos como Probabilidad Modelada.}
+\textit{Aquí se presentan dos momentos diferentes: Inicialmente aquel donde la escogencia del siguiente nodo de un camino, solo tiene que estar dentro del conjunto de vecinos del nodo actual, pero todos con la misma probabilidad de ser seleccionados; este modelo se reconocerá como Probabilidades Uniformes. Seguidamente se implementa la generación de la matriz de probabilidades de transición de pasar de un nodo a otro, la cual se basa en un fundamento matemático específico que se presentó en la sección \ref{mat}, modelo que se espera que converja a una única respuesta con la mejor ruta encontrada; y este se reconocerá como Probabilidad Modelada.}
 
 \subsection{Búsqueda con probabilidad uniforme}
 
@@ -193,15 +253,18 @@ n=Cantidad de nodos)} \label{PsUniforme}
 \STATE Generate: Ad[nxn] = Matriz de adyacencia
 \STATE Generate: B[n] = Bandits reales
 \FOR{t = 1 \TO T}
-     \STATE Initialize: orig = 0
-     \STATE Add: orig in path
-     \FOR{l = 1 \TO L-1}
+    \STATE Generate: $Gan_{n}$
+    \STATE $Gain_{path}$ = 0
+    \STATE Initialize: orig = 0
+    \STATE Add: orig in path
+    \FOR{l = 1 \TO L-1}
         \STATE Generate: $nvz_{orig}$ = vecinos de orig
         \STATE Random: ${dest \in nvz_{orig}}$
         \STATE $orig = dest$
         \STATE Add: orig in path
+        \STATE $Gain_{path}$ =+ $Gan_{orig}$
      \ENDFOR
-     \STATE Calculate: $Gan_{path}$
+     \STATE Imprima: path
 \ENDFOR
 \end{algorithmic}
 \end{algorithm}
@@ -235,7 +298,8 @@ Posteriormente se implementó el cálculo de la matriz de probabilidades de tran
         \STATE v[n+1] = v[n] + $\delta$ by i $\in$ path
      \ELSE
         \STATE v[n+1] = v[n] - $\delta$ by i $\in$ path   
-     \ENDIF    
+     \ENDIF   
+     \STATE Imprima: path
 \ENDFOR
 \end{algorithmic}
 \end{algorithm}
@@ -291,3 +355,6 @@ Con 33 iteraciones (T=33) el algoritmo \ref{Pseudo} generó la gráfica de la fi
 En esta gráfica, al igual que en la del modelo anterior, la curva superior azul corresponde a la ganancia de la mejor ruta probada hasta el momento, calculada con el valor real de los \textit{bandits} o medias asignadas a cada uno; en la curva más inestable se presentan las ganancias obtenidas en cada instante de tiempo por la ruta seleccionada, calculada con los valores distorsionados de los \textit{bandits}, que fueron generados alrededor del vector B de las medias, con una desviación estándar de 1; y en la curva inferior verdosa se muestra el promedio acumulado de estas ganancias. 
 
 De otra parte, era importante saber cómo se comportaba el algoritmo, al ejecutarlo varias veces, dejando fijos los datos de entrada correspondientes al grafo que se quería evaluar, por lo que de aquí en adelante no se generaron más matrices de adyacencia ni vectores reales de los \textit{bandits} aleatorios, sino que se dejaron valores fijos para ejecutar las pruebas que se explican en el siguiente capítulo.
+
+
+%y se estima una ganancia que se genera aleatoriamente a una desviación estándar de su \textit{bandit} ... La decisión de usar una generación de números aleatorios que siguen una distribución normal con media en cero y desviación estándar en 1, es porque es la utilizada en la literatura de aprendizaje por refuerzo \citep{sutton1992reinforcement}, con la cual se ha probado el funcionamiento del modelo de decisión \textit{n-armed bandit}. 
