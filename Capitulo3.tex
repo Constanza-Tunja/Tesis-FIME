@@ -10,6 +10,7 @@ El desarrollo de la metodología propuesta en el proyecto es el capítulo centra
 %Aquí se describe cada uno de los componentes del diseño que compone esta investigación.
 
 \section{Diseño del grafo}
+
 \textit{Inspirados en el grafo del caso de estudio descrito en la sección \ref{Sec:CMMN}, se observó que en la notación de modelado CMMN (ver figura \ref{EjCMMN}) se cuenta con un conjunto de tareas o actividades y de flujos entre ellas, que pueden ser opcionales. Se vio cómo esta situación podía modelarse en un grafo, en el que el problema a solucionar consiste en qué tareas realizar de \textbf{L} etapas consecutivas, para alcanzar al final el objetivo.}
 
 \textit{Un grafo dirigido y conexo permite modelar la estructura de procesos de decisión por etapas de estado y tiempo finitos, como el quw se aprecia en la figura \ref{GrafoEtapas}, cuyos nodos, entre cada dos etapas, tienen las características de un grafo bipartito, es decir que, entre acciones de la misma etapa no deben existir aristas; además, como es conexo, se garantiza que exista al menos una arista que conecte dos etapas sucesivas, así, cada nodo, (excepto los de la última etapa), debe estar conectado al menos con un nodo de la etapa siguiente.}
@@ -103,7 +104,7 @@ Este aspecto es el que se conoce como explotación que, en términos de juegos d
 %Aquí se tendrá que asociar a cada secuencia de nodos, que eventualmente sea conformada, un contador y un valor medio de las ganancias que va acumulando durante la ejecución del programa, para poder, de ellas seleccionar la mejor para dar la respuesta.
 
 \section{Construcción del algoritmo}
-
+\label{algoritmos}
 El desarrollo y ejecución de los algoritmos se hizo en el lenguaje de programación
 Python 3.7, en un computador personal con procesador Intel Core i3-6006U de 2.00 GHz con 4.0 GB de memoria RAM, con sistema operativo Windows 10, de 64 bits.
 
