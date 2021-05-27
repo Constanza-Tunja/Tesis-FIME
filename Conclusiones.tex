@@ -10,9 +10,9 @@ Al finalizar el trabajo de tesis, se establece que se ha dado solución a lo pla
     \item Se logra modelar, en el grafo por etapas, el manejo de casos dinámicos por parte de las BPMS, partiendo de la notación CMMN y siguiendo las recomendaciones consignadas en el capítulo \ref{aplica}.   
 \end{itemize} 
 
-Con esta tesis se presenta a la comunidad científica un modelo, no reportado, con una estructura de aprendizaje por refuerzo para problemas específicos por etapas de estado y tiempo finitos, dispuestos en un grafo por etapas, para aprender de forma eficiente una trayectoria ́óptima que debe seguir un agente.
+El modelo propuesto es una implementación, hasta donde sabemos, nueva y muy simple en el campo de aprendizaje por refuerzo usando probabilidades. Se inscribe dentro del campo de los sistemas de decisión de Markov de estado finito y tiempo discreto (por episodios) con un número de tiempos en cada episodio también finito, específicamente para problemas dispuestos en un grafo por etapas, donde se requiere aprender de forma eficiente una trayectoria óptima que debe seguir un agente.
 
-Se inscribe dentro del campo de Aprendizaje por Refuerzo para sistemas de decisión de Markov de estado finito y tiempo discreto (por episodios) con un número de tiempos en cada episodio también finito. La estructura simple de un grafo dirigido permite hacer un muestre eficiente para descubrir las trayectorias óptimas que debe seguir el agente. 
+La estructura del modelo de decisión como grafo dirigido por etapas permite construir un algoritmo en el que las probabilidades de transición entre estados se actualizan directamente a partir de la función de valor estimada para cada nodo, dado que la estructura del grafo permite un cálculo eficiente de la constante de normalización de dichas probabilidades.
 
 Aunque la aproximación de las probabilidades de transición de entre nodos, generó resultados satisfactorios, es un trabajo en el que se puede avanzar en varios aspectos:
 \begin{itemize}

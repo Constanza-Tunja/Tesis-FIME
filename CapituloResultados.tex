@@ -3,7 +3,7 @@
 
 En este capítulo se presentan los resultados de los experimentos que se ejecutaron para ajustar algunos parámetros del algoritmo y para verificar el efecto de la aleatoriedad en el mismo. Para ello se toma el grafo de 5 etapas y 13 nodos con valores fijos para sus respectivos \textit{bandits}, los cuales tiene la característica que, en cada etapa, uno de ellos es suficientemente mejor que los demás y hará que, seguramente, tal nodo forme parte  del vector de acciones seleccionadas al final de las 5 etapas. 
 
-Los valores que se fijaron para la matriz de adyacencia y para los valores de utilidad reales de los \textit{bandits} del grafo que se usará en los experimentos descritas en este capítulo, son los siguientes:
+Los valores que se fijaron para la matriz de adyacencia y para los valores reales de los \textit{bandits} del grafo que se usará en los experimentos descritas en este capítulo, son los siguientes:
 
 \renewcommand{\arraystretch}{0.5}
 %\begin{equation}
@@ -51,7 +51,7 @@ El grafo, con las aristas indicadas en la matriz de adyacencia y los valores de 
 
 \section{Parámetro Deltha puro}
 
-Se retoman aquí las fórmulas con las que se consigue que el autómata aprenda y genere una matriz de probabilidades de transición entre nodos, para contextualizar el \textbf{parámetro de aprendizaje} $\delta$ que otorga el cambio de una iteración a otra de los valores de utilidad de los nodos, como se se muestra en la fórmula \ref{exponente4}.
+Se retoman aquí las fórmulas con las que se consigue que el autómata aprenda y genere una matriz de probabilidades de transición entre nodos, para contextualizar el \textbf{parámetro de aprendizaje} $\delta$ que permite la actualización de una iteración a otra de la función de valor de los nodos, como se se muestra en la fórmula \ref{exponente4}.
 \begin{eqnarray}\label{exponente4}
 v_j(\tau + 1) = v_j(\tau) \pm \delta,
 \end{eqnarray}
@@ -226,7 +226,7 @@ Se decide, entonces trabajar con una variable $\delta$ dependiente de la magnitu
 
 \section{Parámetro Gamma}
 
-Se procede a cambiar $\delta$ por un valor que cambiará en función de la ganancia que se recibe al final de la ruta probada, de forma que, inclusive, el signo se ajustará cuando hayan pérdidas, sin hacerse necesario decidir entre suma y resta. Para ello se involucra un factor de aprendizaje Gamma ($\gamma$) que dosificará la retribución que tendrá la ganancia en el ajuste de los valores de utilidad de los \textit{bandits} asociados a los nodos de la ruta probada, como se aprecia en la ecuación \ref{gama}, al multiplicar $\gamma$ por la ganancia ($Gain$) o recompensa recibida al final del camino.
+Se procede a cambiar $\delta$ por un valor que cambiará en función de la ganancia que se recibe al final de la ruta probada, de forma que, inclusive, el signo se ajustará cuando hayan pérdidas, sin hacerse necesario decidir entre suma y resta. Para ello se involucra un factor de aprendizaje Gamma ($\gamma$) que dosificará la retribución que tendrá la ganancia en el ajuste de la función de valor de los \textit{bandits} asociados a los nodos de la ruta probada, como se aprecia en la ecuación \ref{gama}, al multiplicar $\gamma$ por la ganancia ($Gain$) o recompensa recibida al final del camino.
 \begin{eqnarray}
 \label{gama}
 v_j(\tau + 1) = v_j(\tau) + \gamma Gain
@@ -502,7 +502,7 @@ Teniendo establecidos los parámetros de número de iteraciones y del factor de 
 
 De acuerdo al diseño explicado en la sección \ref{algoritmos}, se ejecutó el programa de forma que aceptara como datos de entrada, además de los ya implementados, la cantidad de etapas del grafo y la cantidad de nodos en cada etapa. La generación de la matriz de adyacencia ha previsto para que cada nodo tenga al menos un nodo adyacente de la siguiente etapa, excepto si es de la ultima etapa, así como una densidad de conectividad entre los nodos del 66.67\%. 
 
-Los valores de utilidad de los \textit{bandits} se generan también de forma aleatoria con media en cero y desviación estándar de una unidad, pero se modifican computacionalmente para que uno de los nodos de cada etapa, elegido al azar, tenga asociada una ganancia positiva superior a la de los demás nodos de su etapa. 
+Los valores de los \textit{bandits} se generan también de forma aleatoria con media en cero y desviación estándar de una unidad, pero se modifican computacionalmente para que uno de los nodos de cada etapa, elegido al azar, tenga asociada una ganancia positiva superior a la de los demás nodos de su etapa. 
 
 Los valores generados para los \textit{bandits} se ajustaron para que las ganancias promedio quedaran del orden de las centenas, como las del grafo de prueba, ya que el valor de $\gamma$ depende de la magnitud de la ganancia que se obtenga en cada iteración.
 
